@@ -1,0 +1,26 @@
+{
+	"name": "fw-testing-cli",
+	"version": "0.0.0",
+	"license": "MIT",
+	"bin": "./build/cli.js",
+	"engines": {
+		"node": ">=8"
+	},
+	"scripts": {
+		"dev": "pastel dev",
+		"build": "pastel build",
+		"prepare": "pastel build"
+	},
+	"files": [
+		"build"
+	],
+	"dependencies": {
+		"axios": "^0.19.2",
+		"dedent": "^0.7.0",
+		"ink": "^2.7.1",
+		"ink-markdown": "^1.0.1",
+		"pastel": "^1.0.3",
+		"prop-types": "^15.7.2",
+		"react": "^16.13.1"
+	}
+}
