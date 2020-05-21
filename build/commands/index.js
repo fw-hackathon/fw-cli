@@ -117,7 +117,33 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"index.js":[function(require,module,exports) {
+})({"../components/header.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _inkGradient = _interopRequireDefault(require("ink-gradient"));
+
+var _inkBigText = _interopRequireDefault(require("ink-big-text"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const Header = () => {
+  return /*#__PURE__*/_react.default.createElement(_inkGradient.default, {
+    name: "pastel"
+  }, /*#__PURE__*/_react.default.createElement(_inkBigText.default, {
+    text: "FW-CLI"
+  }));
+};
+
+var _default = Header;
+exports.default = _default;
+},{}],"../components/select.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -127,15 +153,13 @@ exports.default = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
-var _propTypes = _interopRequireDefault(require("prop-types"));
-
 var _ink = require("ink");
 
-var _inkMarkdown = _interopRequireDefault(require("ink-markdown"));
-
-var _dedent = _interopRequireDefault(require("dedent"));
-
 var _axios = _interopRequireDefault(require("axios"));
+
+var _inkSelectInput = _interopRequireDefault(require("ink-select-input"));
+
+var _inkSpinner = _interopRequireDefault(require("ink-spinner"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -143,43 +167,99 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-/// Hello world command
-const markdown = (0, _dedent.default)`
-# create-pastel-app [![Build Status](https://travis-ci.org/vadimdemedes/create-pastel-app.svg?branch=master)](https://travis-ci.org/vadimdemedes/create-pastel-app)
+const Select = () => {
+  const [branches, setBranches] = (0, _react.useState)([]);
+  const [loading, setLoading] = (0, _react.useState)(true);
+  (0, _react.useEffect)(() => {
+    /**
+     * 	{
+    		"name": "master",
+    		"commit": {
+    		"sha": "b71ca551ba164f5f049eeafd8bbd0605c1325227",
+    		"url": "https://api.github.com/repos/kentcdodds/testing-node-apps/commits/b71ca551ba164f5f049eeafd8bbd0605c1325227"
+    		},
+    		"protected": false
+    		 },
+     */
+    async function getBranches() {
+      const baseUrl = 'https://api.github.com/repos/kentcdodds/testing-node-apps/branches';
+      const {
+        data
+      } = await _axios.default.get(baseUrl);
+      /**
+       * {
+      	label: 'First',
+      	value: 'first',
+      	},
+       */
 
-> Generate a starter [Pastel](https://github.com/vadimdemedes/pastel) app
+      const branches = data.map(({
+        name
+      }) => ({
+        label: name,
+        value: name
+      }));
+      setBranches(branches);
+      setLoading(false);
+    }
 
+    getBranches();
+  }, []);
 
-## Usage
+  const handleSelect = item => {};
 
-This helper tool scaffolds out basic project structure for Pastel apps and lets you avoid the boilerplate and get to building beautiful CLIs in no time.
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, loading && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ink.Color, {
+    green: true
+  }, /*#__PURE__*/_react.default.createElement(_inkSpinner.default, {
+    type: "dots"
+  })), ' Fetching'), /*#__PURE__*/_react.default.createElement(_inkSelectInput.default, {
+    items: branches,
+    onSelect: handleSelect
+  }));
+};
 
-\`\`\`js
-console.log('jiso');
-\`\`\`
+var _default = Select;
+exports.default = _default;
+},{}],"index.js":[function(require,module,exports) {
+"use strict";
 
-![](media/demo.gif)
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
 
+var _react = _interopRequireWildcard(require("react"));
 
-## License
+var _inkMarkdown = _interopRequireDefault(require("ink-markdown"));
 
-MIT © [Vadim Demedes](https://vadimdemedes.com)
-`;
+var _axios = _interopRequireDefault(require("axios"));
 
-const Hello = () => {
-  const [md, setMd] = (0, _react.useState)("");
+var _inkDivider = _interopRequireDefault(require("ink-divider"));
+
+var _header = _interopRequireDefault(require("../components/header"));
+
+var _select = _interopRequireDefault(require("../components/select"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+const Index = () => {
+  const [md, setMd] = (0, _react.useState)('');
   (0, _react.useEffect)(() => {
     async function getReadme() {
-      const readme = await _axios.default.get("https://raw.githubusercontent.com/vadimdemedes/create-pastel-app/master/readme.md");
+      const readme = await _axios.default.get('https://raw.githubusercontent.com/vadimdemedes/create-pastel-app/master/readme.md');
       setMd(readme.data);
     }
 
     getReadme();
   }, [md]);
-  return /*#__PURE__*/_react.default.createElement(_inkMarkdown.default, null, md);
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_header.default, null), /*#__PURE__*/_react.default.createElement(_select.default, null));
 };
 
-var _default = Hello;
+var _default = Index;
 exports.default = _default;
-},{}]},{},["index.js"], null)
+},{"../components/header":"../components/header.js","../components/select":"../components/select.js"}]},{},["index.js"], null)
 //# sourceMappingURL=/index.js.map
