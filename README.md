@@ -16,7 +16,7 @@
 
 ---
 
-![](https://i.imgur.com/j9nFIyV.png)
+![](https://i.imgur.com/DMkN3sX.gif)
 
 ## 📝 Table of Contents
 
