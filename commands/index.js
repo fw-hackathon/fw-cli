@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Divider from 'ink-divider';
+import Spinner from 'ink-spinner';
+import { Color } from 'ink';
 
 import Header from '../components/header';
 import Topic from '../components/topic';
@@ -8,7 +10,7 @@ import Readme from '../components/readme';
 
 const Index = () => {
 	const [step, setStep] = useState({ index: 0, payload: [] });
-
+	const [loading, setLoading] = useState(false);
 	// go back
 	const back = () => {
 		// let payload = [...step.payload];
@@ -25,16 +27,6 @@ const Index = () => {
 	};
 
 	// step 1
-	const handleBranch = (branch) => {
-		const { value } = branch;
-		if (value === 'back') {
-			console.log(step.payload);
-			back();
-		}
-
-		// checkout branch
-	};
-
 	const handleBranchHighlight = (branch) => {
 		const { value } = branch;
 		if (step.payload.length === 1) {
@@ -44,6 +36,54 @@ const Index = () => {
 			originPayload.pop();
 			setStep({ index: 2, payload: [...originPayload, value] });
 		}
+	};
+
+	// step 2
+	const handleBranch = async (branch) => {
+		const { value } = branch;
+		if (value === 'back') {
+			console.log(step.payload);
+			back();
+			return;
+		}
+		setStep({ index: 3, payload: step.payload });
+		// checkout branch
+		// console.log(__dirname);
+		await command();
+		// process.exit();
+	};
+
+	/**
+	 * Executes a shell command and return it as a Promise.
+	 * @param cmd {string}
+	 * @return {Promise<string>}
+	 */
+	function execCmd(cmd) {
+		const exec = require('child_process').exec;
+		return new Promise((resolve, reject) => {
+			exec(cmd, (error, stdout, stderr) => {
+				if (error) {
+					console.warn(error);
+					reject(error);
+				}
+				resolve(stdout ? stdout : stderr);
+			});
+		});
+	}
+
+	const command = async () => {
+		const baseUrl = `https://github.com/fw-hackathon/${step.payload[0]}`;
+		const scripts = [
+			`git clone --single-branch --branch ${step.payload[1]} ${baseUrl}`,
+			`npm install --prefix ./${step.payload[0]}`,
+			`npm run test:exercise:watch --prefix ./${step.payload[0]}`,
+		];
+		//
+		console.log(await execCmd(scripts[0]));
+		setLoading(true);
+		await execCmd(scripts[1]);
+		process.exit();
+		// console.log(await execCmd(scripts[2]));
 	};
 
 	return (
@@ -63,6 +103,14 @@ const Index = () => {
 				<Readme topic={step.payload[0]} branch={step.payload[1]} />
 			)}
 			<Divider title={'🚀🚀🚀'} />
+			{loading && (
+				<>
+					<Color green>
+						<Spinner type="dots" />
+					</Color>
+					{' Installing...'}
+				</>
+			)}
 		</>
 	);
 };
