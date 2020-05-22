@@ -1,28 +1,68 @@
-import React, { useState, useEffect } from 'react';
-import Markdown from 'ink-markdown';
-import axios from 'axios';
+import React, { useState } from 'react';
 import Divider from 'ink-divider';
 
 import Header from '../components/header';
-import Select from '../components/select';
+import Topic from '../components/topic';
+import Branch from '../components/branch';
+import Readme from '../components/readme';
 
 const Index = () => {
-	const [md, setMd] = useState('');
+	const [step, setStep] = useState({ index: 0, payload: [] });
 
-	useEffect(() => {
-		async function getReadme() {
-			const readme = await axios.get(
-				'https://raw.githubusercontent.com/vadimdemedes/create-pastel-app/master/readme.md'
-			);
-			setMd(readme.data);
+	// go back
+	const back = () => {
+		// let payload = [...step.payload];
+		// payload.pop();
+		// payload.pop();
+		// setStep({ index: step.index - 2, payload });
+		setStep({ index: 0, payload: [] });
+	};
+
+	// step 0
+	const handleTopic = (topic) => {
+		const { value } = topic;
+		setStep({ index: 1, payload: [...step.payload, value] });
+	};
+
+	// step 1
+	const handleBranch = (branch) => {
+		const { value } = branch;
+		if (value === 'back') {
+			console.log(step.payload);
+			back();
 		}
-		getReadme();
-	}, [md]);
+
+		// checkout branch
+	};
+
+	const handleBranchHighlight = (branch) => {
+		const { value } = branch;
+		if (step.payload.length === 1) {
+			setStep({ index: 2, payload: [...step.payload, value] });
+		} else if (step.payload.length === 2) {
+			const originPayload = [...step.payload];
+			originPayload.pop();
+			setStep({ index: 2, payload: [...originPayload, value] });
+		}
+	};
+
 	return (
 		<>
 			<Header />
-			{/* <Divider title={'🚀🚀🚀'} /> */}
-			<Select />
+			{step.index === 0 && <Topic handleSelect={handleTopic} />}
+			{(step.index === 1 || step.index === 2) && (
+				<>
+					<Branch
+						topic={step.payload[0]}
+						handleSelect={handleBranch}
+						handleHighlight={handleBranchHighlight}
+					/>
+				</>
+			)}
+			{step.index === 2 && (
+				<Readme topic={step.payload[0]} branch={step.payload[1]} />
+			)}
+			<Divider title={'🚀🚀🚀'} />
 		</>
 	);
 };

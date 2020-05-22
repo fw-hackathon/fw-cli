@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Color } from 'ink';
+import { Box, Color } from 'ink';
 import axios from 'axios';
 import SelectInput from 'ink-select-input';
 import Spinner from 'ink-spinner';
 
-const Select = () => {
-	const [branches, setBranches] = useState([]);
+const parseRepos = (repos) => {
+	const parse = 'fw-testing-';
+	const data = [];
+	repos.forEach((repo) => {
+		if (repo.name.includes(parse)) {
+			repo.label = repo.name.split(parse)[1];
+			data.push(repo);
+		}
+	});
+	return data;
+};
+
+const Select = ({ handleSelect }) => {
+	const [topics, setTopics] = useState([]);
 	const [loading, setLoading] = useState(true);
 	useEffect(() => {
 		/**
@@ -18,27 +30,30 @@ const Select = () => {
 				"protected": false
  			 },
 		 */
-		async function getBranches() {
-			const baseUrl =
-				'https://api.github.com/repos/kentcdodds/testing-node-apps/branches';
+		async function getTopics() {
+			const baseUrl = 'https://api.github.com/orgs/fw-hackathon/repos';
 			const { data } = await axios.get(baseUrl);
-
 			/**
 			 * {
 				label: 'First',
 				value: 'first',
 				},
 			 */
-			const branches = data.map(({ name }) => ({ label: name, value: name }));
-			setBranches(branches);
+			const topics = parseRepos(data).map(({ name, label }) => ({
+				label,
+				value: name,
+			}));
+			setTopics(topics);
 			setLoading(false);
 		}
-		getBranches();
+		getTopics();
 	}, []);
-	const handleSelect = (item) => {};
 
 	return (
 		<>
+			<Box>
+				Welcome to the tutorial, please select which topic you want to learn.
+			</Box>
 			{loading && (
 				<>
 					<Color green>
@@ -47,7 +62,7 @@ const Select = () => {
 					{' Fetching'}
 				</>
 			)}
-			<SelectInput items={branches} onSelect={handleSelect} />
+			<SelectInput items={topics} onSelect={handleSelect} />
 		</>
 	);
 };

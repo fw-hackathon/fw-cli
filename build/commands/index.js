@@ -143,7 +143,7 @@ const Header = () => {
 
 var _default = Header;
 exports.default = _default;
-},{}],"../components/select.js":[function(require,module,exports) {
+},{}],"../components/topic.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -167,7 +167,100 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-const Select = () => {
+const parseRepos = repos => {
+  const parse = 'fw-testing-';
+  const data = [];
+  repos.forEach(repo => {
+    if (repo.name.includes(parse)) {
+      repo.label = repo.name.split(parse)[1];
+      data.push(repo);
+    }
+  });
+  return data;
+};
+
+const Select = ({
+  handleSelect
+}) => {
+  const [topics, setTopics] = (0, _react.useState)([]);
+  const [loading, setLoading] = (0, _react.useState)(true);
+  (0, _react.useEffect)(() => {
+    /**
+     * 	{
+    		"name": "master",
+    		"commit": {
+    		"sha": "b71ca551ba164f5f049eeafd8bbd0605c1325227",
+    		"url": "https://api.github.com/repos/kentcdodds/testing-node-apps/commits/b71ca551ba164f5f049eeafd8bbd0605c1325227"
+    		},
+    		"protected": false
+    		 },
+     */
+    async function getTopics() {
+      const baseUrl = 'https://api.github.com/orgs/fw-hackathon/repos';
+      const {
+        data
+      } = await _axios.default.get(baseUrl);
+      /**
+       * {
+      	label: 'First',
+      	value: 'first',
+      	},
+       */
+
+      const topics = parseRepos(data).map(({
+        name,
+        label
+      }) => ({
+        label,
+        value: name
+      }));
+      setTopics(topics);
+      setLoading(false);
+    }
+
+    getTopics();
+  }, []);
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ink.Box, null, "Welcome to the tutorial, please select which topic you want to learn."), loading && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ink.Color, {
+    green: true
+  }, /*#__PURE__*/_react.default.createElement(_inkSpinner.default, {
+    type: "dots"
+  })), ' Fetching'), /*#__PURE__*/_react.default.createElement(_inkSelectInput.default, {
+    items: topics,
+    onSelect: handleSelect
+  }));
+};
+
+var _default = Select;
+exports.default = _default;
+},{}],"../components/branch.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _ink = require("ink");
+
+var _axios = _interopRequireDefault(require("axios"));
+
+var _inkSelectInput = _interopRequireDefault(require("ink-select-input"));
+
+var _inkSpinner = _interopRequireDefault(require("ink-spinner"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+const Branch = ({
+  topic,
+  handleSelect,
+  handleHighlight
+}) => {
   const [branches, setBranches] = (0, _react.useState)([]);
   const [loading, setLoading] = (0, _react.useState)(true);
   (0, _react.useEffect)(() => {
@@ -182,7 +275,7 @@ const Select = () => {
     		 },
      */
     async function getBranches() {
-      const baseUrl = 'https://api.github.com/repos/kentcdodds/testing-node-apps/branches';
+      const baseUrl = `https://api.github.com/repos/fw-hackathon/${topic}/branches`;
       const {
         data
       } = await _axios.default.get(baseUrl);
@@ -199,28 +292,32 @@ const Select = () => {
         label: name,
         value: name
       }));
-      setBranches(branches);
+      const back = {
+        label: '⏮  back to topics',
+        value: 'back'
+      };
+      setBranches([...branches, back]);
       setLoading(false);
     }
 
     getBranches();
   }, []);
-
-  const handleSelect = item => {};
-
-  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, loading && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ink.Color, {
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ink.Box, null, "Please select which lesson you want to start challenging."), loading && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ink.Color, {
     green: true
   }, /*#__PURE__*/_react.default.createElement(_inkSpinner.default, {
     type: "dots"
-  })), ' Fetching'), /*#__PURE__*/_react.default.createElement(_inkSelectInput.default, {
+  })), ' Fetching'), branches.length === 1 && /*#__PURE__*/_react.default.createElement(_ink.Box, null, /*#__PURE__*/_react.default.createElement(_ink.Color, {
+    red: true
+  }, "No Lesson Yet..."), /*#__PURE__*/_react.default.createElement(_ink.Text, null, "please go back to topics")), /*#__PURE__*/_react.default.createElement(_inkSelectInput.default, {
     items: branches,
-    onSelect: handleSelect
+    onSelect: handleSelect,
+    onHighlight: handleHighlight
   }));
 };
 
-var _default = Select;
+var _default = Branch;
 exports.default = _default;
-},{}],"index.js":[function(require,module,exports) {
+},{}],"../components/readme.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -234,11 +331,58 @@ var _inkMarkdown = _interopRequireDefault(require("ink-markdown"));
 
 var _axios = _interopRequireDefault(require("axios"));
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+const BACK = 'back';
+
+const Readme = ({
+  topic,
+  branch
+}) => {
+  const [md, setMd] = (0, _react.useState)('');
+  (0, _react.useEffect)(() => {
+    async function getReadme() {
+      const readme = await _axios.default.get(`https://raw.githubusercontent.com/fw-hackathon/${topic}/${branch}/README.md`);
+      setMd(readme.data);
+    }
+
+    if (branch === BACK) {
+      setMd('');
+      return;
+    }
+
+    if (topic && branch) {
+      getReadme();
+    }
+  }, [branch]);
+  return /*#__PURE__*/_react.default.createElement(_inkMarkdown.default, null, md);
+};
+
+var _default = Readme;
+exports.default = _default;
+},{}],"index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
 var _inkDivider = _interopRequireDefault(require("ink-divider"));
 
 var _header = _interopRequireDefault(require("../components/header"));
 
-var _select = _interopRequireDefault(require("../components/select"));
+var _topic = _interopRequireDefault(require("../components/topic"));
+
+var _branch = _interopRequireDefault(require("../components/branch"));
+
+var _readme = _interopRequireDefault(require("../components/readme"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -247,19 +391,81 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 const Index = () => {
-  const [md, setMd] = (0, _react.useState)('');
-  (0, _react.useEffect)(() => {
-    async function getReadme() {
-      const readme = await _axios.default.get('https://raw.githubusercontent.com/vadimdemedes/create-pastel-app/master/readme.md');
-      setMd(readme.data);
-    }
+  const [step, setStep] = (0, _react.useState)({
+    index: 0,
+    payload: []
+  }); // go back
 
-    getReadme();
-  }, [md]);
-  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_header.default, null), /*#__PURE__*/_react.default.createElement(_select.default, null));
+  const back = () => {
+    // let payload = [...step.payload];
+    // payload.pop();
+    // payload.pop();
+    // setStep({ index: step.index - 2, payload });
+    setStep({
+      index: 0,
+      payload: []
+    });
+  }; // step 0
+
+
+  const handleTopic = topic => {
+    const {
+      value
+    } = topic;
+    setStep({
+      index: 1,
+      payload: [...step.payload, value]
+    });
+  }; // step 1
+
+
+  const handleBranch = branch => {
+    const {
+      value
+    } = branch;
+
+    if (value === 'back') {
+      console.log(step.payload);
+      back();
+    } // checkout branch
+
+  };
+
+  const handleBranchHighlight = branch => {
+    const {
+      value
+    } = branch;
+
+    if (step.payload.length === 1) {
+      setStep({
+        index: 2,
+        payload: [...step.payload, value]
+      });
+    } else if (step.payload.length === 2) {
+      const originPayload = [...step.payload];
+      originPayload.pop();
+      setStep({
+        index: 2,
+        payload: [...originPayload, value]
+      });
+    }
+  };
+
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_header.default, null), step.index === 0 && /*#__PURE__*/_react.default.createElement(_topic.default, {
+    handleSelect: handleTopic
+  }), (step.index === 1 || step.index === 2) && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_branch.default, {
+    topic: step.payload[0],
+    handleSelect: handleBranch,
+    handleHighlight: handleBranchHighlight
+  })), step.index === 2 && /*#__PURE__*/_react.default.createElement(_readme.default, {
+    topic: step.payload[0],
+    branch: step.payload[1]
+  }), /*#__PURE__*/_react.default.createElement(_inkDivider.default, {
+    title: '🚀🚀🚀'
+  }));
 };
 
 var _default = Index;
 exports.default = _default;
-},{"../components/header":"../components/header.js","../components/select":"../components/select.js"}]},{},["index.js"], null)
+},{"../components/header":"../components/header.js","../components/topic":"../components/topic.js","../components/branch":"../components/branch.js","../components/readme":"../components/readme.js"}]},{},["index.js"], null)
 //# sourceMappingURL=/index.js.map
