@@ -60,6 +60,8 @@ $ fw-testing-cli
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
+![](https://i.imgur.com/fCuaiiD.png)
+
 We publish to npm.
 
 First time, need to login.
