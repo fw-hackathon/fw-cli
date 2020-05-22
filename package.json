@@ -16,8 +16,8 @@
 	],
 	"dependencies": {
 		"axios": "^0.19.2",
-		"dedent": "^0.7.0",
 		"ink": "^2.7.1",
+		"ink-ascii": "0.0.4",
 		"ink-big-text": "^1.0.1",
 		"ink-box": "^1.0.0",
 		"ink-divider": "^2.0.1",

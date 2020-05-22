@@ -3,6 +3,7 @@ import { Box, Color } from 'ink';
 import axios from 'axios';
 import SelectInput from 'ink-select-input';
 import Spinner from 'ink-spinner';
+import Divider from 'ink-divider';
 
 const parseRepos = (repos) => {
 	const parse = 'fw-testing-';
@@ -52,8 +53,9 @@ const Select = ({ handleSelect }) => {
 	return (
 		<>
 			<Box>
-				Welcome to the tutorial, please select which topic you want to learn.
+				🚀 Welcome to the tutorial, please select which topic you want to learn.
 			</Box>
+			<Divider title={''} padding={2} />
 			{loading && (
 				<>
 					<Color green>

@@ -3,6 +3,7 @@ import { Box, Color, Text } from 'ink';
 import axios from 'axios';
 import SelectInput from 'ink-select-input';
 import Spinner from 'ink-spinner';
+import Divider from 'ink-divider';
 
 const Branch = ({ topic, handleSelect, handleHighlight }) => {
 	const [branches, setBranches] = useState([]);
@@ -38,7 +39,8 @@ const Branch = ({ topic, handleSelect, handleHighlight }) => {
 
 	return (
 		<>
-			<Box>Please select which lesson you want to start challenging.</Box>
+			<Box>💰 Please select which lesson you want to start challenging.</Box>
+			<Divider title={''} padding={2} />
 			{loading && (
 				<>
 					<Color green>

@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import Divider from 'ink-divider';
 import Spinner from 'ink-spinner';
 import { Color } from 'ink';
 
+/** Components */
 import Header from '../components/header';
 import Topic from '../components/topic';
 import Branch from '../components/branch';
 import Readme from '../components/readme';
+import Complete from '../components/complete';
 
 const Index = () => {
 	const [step, setStep] = useState({ index: 0, payload: [] });
 	const [loading, setLoading] = useState(false);
+	const [complete, setComplete] = useState(false);
+
 	// go back
 	const back = () => {
 		// let payload = [...step.payload];
@@ -42,15 +45,12 @@ const Index = () => {
 	const handleBranch = async (branch) => {
 		const { value } = branch;
 		if (value === 'back') {
-			console.log(step.payload);
 			back();
 			return;
 		}
 		setStep({ index: 3, payload: step.payload });
 		// checkout branch
-		// console.log(__dirname);
 		await command();
-		// process.exit();
 	};
 
 	/**
@@ -73,18 +73,25 @@ const Index = () => {
 
 	const command = async () => {
 		const baseUrl = `https://github.com/fw-hackathon/${step.payload[0]}`;
+		const folder = `./${step.payload[0]}`;
+
 		const scripts = [
+			`rm -rf ${folder}`,
 			`git clone --single-branch --branch ${step.payload[1]} ${baseUrl}`,
-			`npm install --prefix ./${step.payload[0]}`,
-			`npm run test:exercise:watch --prefix ./${step.payload[0]}`,
+			`npm install --prefix ${folder}`,
 		];
-		//
-		console.log(await execCmd(scripts[0]));
+
 		setLoading(true);
+		await execCmd(scripts[0]);
 		await execCmd(scripts[1]);
+		await execCmd(scripts[2]);
+		setComplete(true);
 		process.exit();
-		// console.log(await execCmd(scripts[2]));
 	};
+
+	if (complete) {
+		return <Complete />;
+	}
 
 	return (
 		<>
@@ -102,7 +109,6 @@ const Index = () => {
 			{step.index === 2 && (
 				<Readme topic={step.payload[0]} branch={step.payload[1]} />
 			)}
-			<Divider title={'🚀🚀🚀'} />
 			{loading && (
 				<>
 					<Color green>

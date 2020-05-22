@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Markdown from 'ink-markdown';
 import axios from 'axios';
+import Divider from 'ink-divider';
 
 const BACK = 'back';
 
@@ -22,7 +23,12 @@ const Readme = ({ topic, branch }) => {
 			getReadme();
 		}
 	}, [branch]);
-	return <Markdown>{md}</Markdown>;
+	return (
+		<>
+			<Divider title={''} padding={2} />
+			<Markdown>{md}</Markdown>
+		</>
+	);
 };
 
 export default Readme;
