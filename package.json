@@ -15,7 +15,7 @@
 		"build"
 	],
 	"dependencies": {
-		"axios": "^0.19.2",
+		"axios": "^0.21.1",
 		"ink": "^2.7.1",
 		"ink-ascii": "0.0.4",
 		"ink-big-text": "^1.0.1",
